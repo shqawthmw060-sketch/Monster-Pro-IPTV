@@ -1,15 +1,14 @@
 # MONSTER IPTV — Milestone 1: Foundation (Clean Start)
 
 ## Requirements
-- Start completely from zero.
-- Build Milestone 1 only: architecture, tokens, globals.css, theme foundation, layout primitives, responsive system, UI component foundation, image foundation, animation foundation, accessibility foundation, icon foundation, routing, and documentation.
-- NO fake data, NO fake authentication, NO fake IPTV streams.
-- Stop after Milestone 1 and report.
+- Milestone 31: Favorites, Watchlist & User Library System.
+- Real, server-authoritative library, watchlist, history, progress, and cross-device synchronization.
+- NO fake data, NO fake library state, NO cross-user privacy leaks.
 
 ## Checklist
-- [ ] Initialize clean directory structure matching the architecture spec.
-- [ ] Create design tokens and global styles.
-- [ ] Implement responsive layout primitives (Container, Page, Section, Stack, Row, Column, Grid).
-- [ ] Build image foundation and accessibility primitives.
-- [ ] Set up routing, localization structure, and documentation.
-- [ ] Run validation checks and build verification.
+- [x] Milestone 30 completed: Search, Discovery & Personalization.
+- [ ] Audit existing library schemas in persistentSchema.ts and entitlement integration.
+- [ ] Define unified DTOs, ownership rules, and pagination policies.
+- [ ] Implement LibraryRepository and LibraryService with strict session authorization.
+- [ ] Integrate customer library UI and search/personalization rails.
+- [ ] Validate privacy, entitlement enforcement, build, and Milestone 31 report.
