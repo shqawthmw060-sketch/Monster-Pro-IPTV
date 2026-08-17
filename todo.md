@@ -1,14 +1,15 @@
 # MONSTER IPTV — Milestone 1: Foundation (Clean Start)
 
 ## Requirements
-- Milestone 31: Favorites, Watchlist & User Library System.
-- Real, server-authoritative library, watchlist, history, progress, and cross-device synchronization.
-- NO fake data, NO fake library state, NO cross-user privacy leaks.
+- Milestone 32: Playback & Media Player System.
+- Real, server-authoritative playback authorization, stream sessions, concurrent stream limits, secure source handoff, live/VOD player, progress persistence, and resilient reconnects.
+- NO fake streams, NO fake credentials, NO client-side authorization bypass.
 
 ## Checklist
-- [x] Milestone 30 completed: Search, Discovery & Personalization.
-- [ ] Audit existing library schemas in persistentSchema.ts and entitlement integration.
-- [ ] Define unified DTOs, ownership rules, and pagination policies.
-- [ ] Implement LibraryRepository and LibraryService with strict session authorization.
-- [ ] Integrate customer library UI and search/personalization rails.
-- [ ] Validate privacy, entitlement enforcement, build, and Milestone 31 report.
+- [x] Milestone 31 completed: Favorites, Watchlist & User Library.
+- [ ] Audit existing player, auth, device, entitlement, and stream session schemas.
+- [ ] Define server playback contracts, decision outcomes, and secure source tokens.
+- [ ] Implement PlaybackService and persistent session management with concurrency limits.
+- [ ] Build reusable MediaPlayer and integrate VOD/live controls, subtitles, audio tracks, and buffering.
+- [ ] Connect player routes to library progress, resume/start-over, and series episode navigation.
+- [ ] Validate playback security, concurrency limits, build, and Milestone 32 report.
