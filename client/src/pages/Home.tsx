@@ -15,6 +15,7 @@ import {
   Tv2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import iconOnlyUrl from "../../../assets/icon-only.png";
 
 const navigation = [
   { href: "/live", label: "Live TV", icon: Radio },
@@ -51,8 +52,13 @@ export default function Home() {
             className="flex items-center gap-3"
             aria-label="MONSTER IPTV home"
           >
-            <span className="flex size-11 items-center justify-center rounded-xl bg-[#00b8ff] text-[#03101c] shadow-[0_0_28px_rgba(0,184,255,0.28)]">
-              <Tv2 className="size-6" aria-hidden="true" />
+            <span className="flex size-11 items-center justify-center overflow-hidden rounded-xl bg-[#07111d] shadow-[0_0_28px_rgba(0,184,255,0.28)] ring-1 ring-[#00b8ff]/35">
+              <img
+                src={iconOnlyUrl}
+                alt=""
+                className="size-full object-cover"
+                aria-hidden="true"
+              />
             </span>
             <span className="leading-none">
               <span className="block text-lg font-black tracking-[0.18em] text-white">
@@ -143,10 +149,10 @@ export default function Home() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative flex size-56 items-center justify-center rounded-full border border-[#00b8ff]/30 bg-[#07111d] shadow-[0_0_80px_rgba(0,184,255,0.18)] sm:size-64">
                   <div className="absolute inset-5 rounded-full border border-dashed border-[#ffc300]/45" />
-                  <Tv2
-                    className="size-20 text-[#00b8ff]"
-                    strokeWidth={1.25}
-                    aria-hidden="true"
+                  <img
+                    src={iconOnlyUrl}
+                    alt="MONSTER IPTV"
+                    className="size-36 rounded-full object-cover sm:size-44"
                   />
                   <span className="absolute bottom-7 rounded-full bg-[#ffc300] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-[#171106]">
                     On air
