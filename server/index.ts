@@ -23,6 +23,8 @@ async function startServer() {
   registerAccessRoutes(app);
   const { registerContentSyncRoutes } = await import("./content/syncRoutes");
   registerContentSyncRoutes(app);
+  const { registerCatalogRoutes } = await import("./content/catalogRoutes");
+  registerCatalogRoutes(app);
 
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {

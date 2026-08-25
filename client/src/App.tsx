@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import AccessGate from "./components/AccessGate";
+import Catalog from "./pages/Catalog";
 
 function Router() {
   return (
@@ -26,10 +27,10 @@ function Router() {
         <AccessGate><NotFound /></AccessGate>
       </Route>
       <Route path="/movies">
-        <AccessGate><NotFound /></AccessGate>
+        <AccessGate><Catalog type="movie" /></AccessGate>
       </Route>
       <Route path="/series">
-        <AccessGate><NotFound /></AccessGate>
+        <AccessGate><Catalog type="series" /></AccessGate>
       </Route>
       <Route path="/sports">
         <AccessGate><NotFound /></AccessGate>
