@@ -5,19 +5,43 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import AccessGate from "./components/AccessGate";
 
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/">
+        <AccessGate />
+      </Route>
+      <Route path="/login">
+        <AccessGate />
+      </Route>
+      <Route path="/subscribe">
+        <AccessGate />
+      </Route>
+      <Route path="/sections">
+        <AccessGate />
+      </Route>
+      <Route path="/live">
+        <AccessGate><NotFound /></AccessGate>
+      </Route>
+      <Route path="/movies">
+        <AccessGate><NotFound /></AccessGate>
+      </Route>
+      <Route path="/series">
+        <AccessGate><NotFound /></AccessGate>
+      </Route>
+      <Route path="/sports">
+        <AccessGate><NotFound /></AccessGate>
+      </Route>
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
 // MONSTER IPTV theme foundation: dark cinematic default with persisted switching enabled.
+// Protected content is server-authorized through AccessGate; the public root is an access entry point.
 
 function App() {
   return (

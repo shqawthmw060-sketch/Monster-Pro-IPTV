@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
+  app.use(express.json({ limit: "32kb" }));
   const server = createServer(app);
 
   // Serve static files from dist/public in production
@@ -17,6 +18,9 @@ async function startServer() {
       : path.resolve(__dirname, "..", "dist", "public");
 
   app.use(express.static(staticPath));
+
+  const { registerAccessRoutes } = await import("./auth/routes");
+  registerAccessRoutes(app);
 
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
