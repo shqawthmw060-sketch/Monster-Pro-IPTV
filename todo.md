@@ -152,3 +152,32 @@
 - [ ] Push to origin/main after verification.
 - [ ] Verify remote commit and key files after push.
 - [ ] Do not create admin credentials or fake IPTV data automatically.
+
+## Authorized content repository discovery
+- [x] Confirm the legal/authorized source and its API or feed format: licensed Xtream Codes API.
+- [ ] Define normalized movie and series metadata plus stream-link policy for Xtream VOD.
+- [ ] Design secure server-to-server integration with MONSTER IPTV.
+- [ ] Separate ingestion, validation, caching, and client delivery.
+
+## Content delivery repository discovery
+- [x] Confirm repository 3 transfers metadata/authorized URLs only; do not copy media files.
+- [ ] Define publish states, idempotency, retries, and deletion behavior for metadata and authorized URLs.
+- [ ] Define secure server-to-server authentication with MONSTER IPTV and separate Xtream credentials.
+- [ ] Confirm the target application API and database ownership before implementation.
+
+## Desktop build — discovery
+- [ ] Inspect current web build and desktop packaging options.
+- [ ] Choose a desktop wrapper that preserves the existing web and Android targets.
+- [ ] Add Windows and macOS build scripts without committing signing secrets.
+- [ ] Validate desktop packaging and document platform limitations.
+
+## Android signing security review — 2026-08-25
+- [ ] Ensure Android keystore and keystore.properties are never committed.
+- [ ] Remove signing secrets from Git staging before any push.
+- [ ] Review Android build configuration for CI-safe signing variables.
+
+## Codespaces Git sync conflict — 2026-08-25
+- [ ] Compare Codespaces working tree with origin/main before merging.
+- [ ] Identify missing client paths and newly added Capacitor/Android files.
+- [ ] Merge remote changes safely without force-push or destructive reset.
+- [ ] Re-run checks after resolving the synchronization conflict.
