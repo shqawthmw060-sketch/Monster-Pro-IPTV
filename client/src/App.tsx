@@ -21,6 +21,7 @@ function Router() {
         <AccessGate />
       </Route>
       <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/login/admin" component={AdminLogin} />
       <Route path="/control" component={Control} />
       <Route path="/control/users"><AdminSection title="User management" scope="USERS" description="Search, status, devices, and account actions will use a server-authorized users API." /></Route>
       <Route path="/control/devices"><AdminSection title="Device management" scope="DEVICES" description="Device identity, activity, blocking, and revocation will use the Neon-backed devices API." /></Route>
