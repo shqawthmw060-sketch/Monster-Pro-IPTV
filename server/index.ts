@@ -21,6 +21,8 @@ async function startServer() {
 
   const { registerAccessRoutes } = await import("./auth/routes");
   registerAccessRoutes(app);
+  const { registerAdminRoutes } = await import("./admin/routes");
+  registerAdminRoutes(app);
   const { registerContentSyncRoutes } = await import("./content/syncRoutes");
   registerContentSyncRoutes(app);
   const { registerCatalogRoutes } = await import("./content/catalogRoutes");

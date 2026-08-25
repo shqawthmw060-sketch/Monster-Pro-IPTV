@@ -181,3 +181,30 @@
 - [ ] Identify missing client paths and newly added Capacitor/Android files.
 - [ ] Merge remote changes safely without force-push or destructive reset.
 - [ ] Re-run checks after resolving the synchronization conflict.
+
+
+## Control Hub Access Incident
+- [ ] تدقيق route `/control` ومكوّن Control Hub وحارس الصلاحيات.
+- [ ] مراجعة مطابقة أدوار `admin` و`super_admin` مع الحساب المنشور.
+- [ ] فحص متغيرات البيئة المطلوبة للإدارة في deployment دون طباعة قيمها.
+- [ ] اختبار رفض المستخدم العادي والسماح للحساب الإداري الحقيقي.
+- [ ] رفع الإصلاح بعد نجاح TypeScript والاختبارات والبناء.
+
+
+## Admin Login and Subscription CTA
+- [ ] تدقيق نموذج `users` والأدوار والجلسات الحالية.
+- [ ] إضافة جلسة إدارية خادمية آمنة مع تحقق `admin` و`super_admin`.
+- [ ] إضافة `/admin/login` و`/control` مع حماية المسار والـ API.
+- [ ] الحفاظ على صفحة دخول MAC + Username + Password للعملاء.
+- [ ] إضافة زر اشتراك يفتح WhatsApp على `01508536392`.
+- [ ] اختبار الرفض والسماح والبناء قبل الرفع إلى GitHub.
+
+
+## Attached Control Hub Specification
+- [ ] مقارنة مواصفات Control Hub المرفقة مع المسارات والملفات الموجودة فعليًا.
+- [ ] فصل واجهة الإدارة عن تطبيق العملاء بصريًا ومساريًا.
+- [ ] استخدام بيانات Neon الحقيقية فقط مع حالات واضحة عند عدم توفر البيانات.
+- [ ] تغطية المستخدمين والأجهزة والمحتوى والأفلام والمسلسلات والمواسم والحلقات والمصادر والبث المباشر.
+- [ ] تغطية المزامنة والاشتراكات والتحليلات والإعدادات والأمان وسجل التدقيق.
+- [ ] منع أي روابط أو إحصاءات أو مستخدمين وهميين، وإبقاء العمليات الحساسة خادمية.
+- [ ] توثيق الميزات غير المتصلة بBackend فعلي بدل عرضها كميزات مكتملة.

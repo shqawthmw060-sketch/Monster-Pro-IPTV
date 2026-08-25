@@ -7,6 +7,9 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import AccessGate from "./components/AccessGate";
 import Catalog from "./pages/Catalog";
+import AdminLogin from "./pages/AdminLogin";
+import Control from "./pages/Control";
+import AdminSection from "./pages/AdminSection";
 
 function Router() {
   return (
@@ -17,6 +20,14 @@ function Router() {
       <Route path="/login">
         <AccessGate />
       </Route>
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/control" component={Control} />
+      <Route path="/control/users"><AdminSection title="User management" scope="USERS" description="Search, status, devices, and account actions will use a server-authorized users API." /></Route>
+      <Route path="/control/devices"><AdminSection title="Device management" scope="DEVICES" description="Device identity, activity, blocking, and revocation will use the Neon-backed devices API." /></Route>
+      <Route path="/control/content"><AdminSection title="Content management" scope="CONTENT" description="Movies, series, seasons, episodes, and legal stream variants will be managed from the content server APIs." /></Route>
+      <Route path="/control/sources"><AdminSection title="Content sources" scope="SOURCES" description="Source health, validation, and sync history will appear after the corresponding protected API is connected." /></Route>
+      <Route path="/control/analytics"><AdminSection title="Analytics" scope="ANALYTICS" description="Only real backend metrics will be shown here. No charts or statistics are fabricated." /></Route>
+      <Route path="/control/logs"><AdminSection title="Audit logs" scope="LOGS" description="Authentication, account, device, import, and system events will be searchable without logging secrets or passwords." /></Route>
       <Route path="/subscribe">
         <AccessGate />
       </Route>
