@@ -6,6 +6,7 @@ import { FormEvent, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, LockKeyhole, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toUserError } from "@/lib/apiError";
 
 export default function AdminLogin() {
   const [, navigate] = useLocation();
@@ -18,8 +19,8 @@ export default function AdminLogin() {
     event.preventDefault(); setError(""); setBusy(true);
     try {
       const response = await fetch("/api/admin/login", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ email, password }) });
-      const payload = await response.json().catch(() => ({})) as { error?: string };
-      if (!response.ok) { setError(payload.error ?? "Administrative sign-in failed."); return; }
+      const payload = await response.json().catch(() => ({})) as { error?: unknown };
+      if (!response.ok) { setError(toUserError(payload.error, "Administrative sign-in failed.")); return; }
       navigate("/control");
     } catch { setError("Unable to reach the administrative service."); }
     finally { setBusy(false); }

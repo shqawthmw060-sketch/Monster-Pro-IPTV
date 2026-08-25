@@ -1,3 +1,5 @@
+import { toUserError } from "@/lib/apiError";
+
 export type AccessAccount = {
   id: string;
   displayName: string;
@@ -30,10 +32,10 @@ export async function signInWithAccessDetails(input: {
   });
   const payload = (await response.json().catch(() => ({}))) as {
     account?: AccessAccount;
-    error?: string;
+    error?: unknown;
   };
-  if (!response.ok) return { error: payload.error ?? "Unable to sign in." };
-  return payload;
+  if (!response.ok) return { error: toUserError(payload.error, "Unable to sign in.") };
+  return { account: payload.account };
 }
 
 export async function signOutAccess(): Promise<void> {
