@@ -55,7 +55,13 @@ export function registerAdminRoutes(app: Express) {
       response.status(503).json({ error: "Administrative sign-in is not configured." });
       return;
     }
-    if (email !== configuredEmail || !(await verifyPassword(password, configuredHash))) {
+    let credentialsValid = false;
+    try {
+      credentialsValid = email === configuredEmail && await verifyPassword(password, configuredHash);
+    } catch {
+      credentialsValid = false;
+    }
+    if (!credentialsValid) {
       response.status(401).json({ error: "The administrative credentials are not valid." });
       return;
     }

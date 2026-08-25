@@ -11,11 +11,16 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
-  const [algorithm, salt, hashHex] = storedHash.split(":");
-  if (algorithm !== "scrypt" || !salt || !hashHex) return false;
-  const expected = Buffer.from(hashHex, "hex");
-  const actual = (await scrypt(password, salt, expected.length)) as Buffer;
-  return expected.length === actual.length && timingSafeEqual(expected, actual);
+  try {
+    const [algorithm, salt, hashHex] = storedHash.trim().split(":");
+    if (algorithm !== "scrypt" || !salt || !hashHex || hashHex.length % 2 !== 0 || !/^[0-9a-f]+$/i.test(hashHex)) return false;
+    const expected = Buffer.from(hashHex, "hex");
+    if (expected.length === 0) return false;
+    const actual = (await scrypt(password, salt, expected.length)) as Buffer;
+    return expected.length === actual.length && timingSafeEqual(expected, actual);
+  } catch {
+    return false;
+  }
 }
 
 export function createSessionToken(): string {
