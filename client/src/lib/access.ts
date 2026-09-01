@@ -34,7 +34,8 @@ export async function signInWithAccessDetails(input: {
     account?: AccessAccount;
     error?: unknown;
   };
-  if (!response.ok) return { error: toUserError(payload.error, "Unable to sign in.") };
+  if (!response.ok)
+    return { error: toUserError(payload.error, "Unable to sign in.") };
   return { account: payload.account };
 }
 

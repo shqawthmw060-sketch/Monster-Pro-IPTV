@@ -17,7 +17,7 @@ export default function AccessGate({ children }: { children?: ReactNode }) {
   useEffect(() => {
     let mounted = true;
     getCurrentAccessAccount()
-      .then((currentAccount) => {
+      .then(currentAccount => {
         if (mounted) setAccount(currentAccount);
       })
       .catch(() => {
@@ -32,12 +32,32 @@ export default function AccessGate({ children }: { children?: ReactNode }) {
   }, [location]);
 
   if (!checked) {
-    return <main className="flex min-h-screen items-center justify-center bg-[#07111d] text-[#73d9ff]"><LoaderCircle className="size-8 animate-spin" aria-label="Checking access" /></main>;
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#07111d] text-[#73d9ff]">
+        <LoaderCircle
+          className="size-8 animate-spin"
+          aria-label="Checking access"
+        />
+      </main>
+    );
   }
 
   if (!account) return <Login />;
-  if (location === "/login" || location === "/" || location === "/subscribe") return <Sections account={account} />;
+  if (location === "/login" || location === "/" || location === "/subscribe")
+    return <Sections account={account} />;
   if (location === "/sections") return <Sections account={account} />;
 
-  return <>{children ?? <Sections account={account} />}<div className="fixed bottom-4 left-4 z-50"><Link href="/sections" className="border border-white/15 bg-[#07111d]/90 px-3 py-2 text-xs font-bold text-slate-300 backdrop-blur hover:text-white">← Sections</Link></div></>;
+  return (
+    <>
+      {children ?? <Sections account={account} />}
+      <div className="fixed bottom-4 left-4 z-50">
+        <Link
+          href="/sections"
+          className="border border-white/15 bg-[#07111d]/90 px-3 py-2 text-xs font-bold text-slate-300 backdrop-blur hover:text-white"
+        >
+          ← Sections
+        </Link>
+      </div>
+    </>
+  );
 }
