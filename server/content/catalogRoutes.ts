@@ -1,8 +1,8 @@
 import { and, eq, gt, isNull } from "drizzle-orm";
 import type { Express, Request, Response } from "express";
-import { db } from "../db";
-import { iptvAccounts, iptvSessions, mediaItems, mediaSources } from "../db/persistentSchema";
-import { hashSessionToken } from "../auth/credentials";
+import { db } from "../db/index.js";
+import { iptvAccounts, iptvSessions, mediaItems, mediaSources } from "../db/persistentSchema.js";
+import { hashSessionToken } from "../auth/credentials.js";
 
 function cookie(request: Request, name: string): string | undefined {
   const raw = request.headers.cookie ?? "";

@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { and, eq, gt, isNull } from "drizzle-orm";
 import type { Express, Request, Response } from "express";
-import { db } from "../db";
-import { iptvAccounts, iptvSessions } from "../db/persistentSchema";
+import { db } from "../db/index.js";
+import { iptvAccounts, iptvSessions } from "../db/persistentSchema.js";
 import {
   createSessionToken,
   hashPassword,
@@ -10,7 +10,7 @@ import {
   isValidMacAddress,
   normalizeMacAddress,
   verifyPassword,
-} from "./credentials";
+} from "./credentials.js";
 
 const SESSION_COOKIE = "monster_access";
 const SESSION_DAYS = 30;

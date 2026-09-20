@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import type { Express, Request, Response } from "express";
-import { db } from "../db";
-import { mediaItems, mediaSources } from "../db/persistentSchema";
+import { db } from "../db/index.js";
+import { mediaItems, mediaSources } from "../db/persistentSchema.js";
 
 const contentSyncKey = process.env.CONTENT_SYNC_KEY;
 

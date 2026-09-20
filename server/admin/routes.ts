@@ -1,9 +1,9 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { Express, Request, Response } from "express";
 import { count, eq } from "drizzle-orm";
-import { db } from "../db";
-import { auditLogs, devices, iptvAccounts, mediaItems, subscriptions, users } from "../db/persistentSchema";
-import { createSessionToken, verifyPassword } from "../auth/credentials";
+import { db } from "../db/index.js";
+import { auditLogs, devices, iptvAccounts, mediaItems, subscriptions, users } from "../db/persistentSchema.js";
+import { createSessionToken, verifyPassword } from "../auth/credentials.js";
 
 type AdminRole = "admin" | "super_admin";
 type AdminSession = { email: string; role: AdminRole; exp: number; nonce: string };
