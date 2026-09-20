@@ -3,10 +3,10 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { registerAccessRoutes } from "./auth/routes";
-import { registerAdminRoutes } from "./admin/routes";
-import { registerCatalogRoutes } from "./content/catalogRoutes";
-import { registerContentSyncRoutes } from "./content/syncRoutes";
+import { registerAccessRoutes } from "./auth/routes.js";
+import { registerAdminRoutes } from "./admin/routes.js";
+import { registerCatalogRoutes } from "./content/catalogRoutes.js";
+import { registerContentSyncRoutes } from "./content/syncRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
