@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import app from "../server/index";
+import app from "../server/index.js";
 
 /**
  * Shared Vercel adapter for the Express API.
