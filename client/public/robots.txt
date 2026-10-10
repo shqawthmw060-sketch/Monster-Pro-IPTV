@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /control
+Disallow: /login
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://monster-pro-iptv.vercel.app/sitemap.xml
