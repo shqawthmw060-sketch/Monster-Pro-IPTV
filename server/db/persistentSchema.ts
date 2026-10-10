@@ -166,6 +166,18 @@ export const auditLogs = pgTable("audit_logs", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const adminLoginAttempts = pgTable("admin_login_attempts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  email: text("email").notNull(),
+  ipAddress: text("ip_address").notNull(),
+  userAgent: text("user_agent").notNull(),
+  status: text("status").notNull().default("pending"),
+  decisionTokenHash: text("decision_token_hash").notNull().unique(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  decidedAt: timestamp("decided_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const appSettings = pgTable("app_settings", {
   key: text("key").primaryKey(),
   value: jsonb("value").$type<unknown>().notNull(),
@@ -176,5 +188,5 @@ export const appSettings = pgTable("app_settings", {
 export const schema = {
   users, profiles, categories, mediaItems, mediaCategories, mediaSources,
   devices, favorites, watchlist, watchProgress, subscriptions, iptvAccounts, iptvSessions,
-  auditLogs, appSettings,
+  auditLogs, adminLoginAttempts, appSettings,
 };

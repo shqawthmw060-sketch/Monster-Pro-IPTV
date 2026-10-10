@@ -10,6 +10,7 @@ import {
   FileText,
   LayoutDashboard,
   LogOut,
+  Mail,
   ShieldCheck,
   Users,
   Video,
@@ -270,6 +271,13 @@ export default function Control() {
               <LogOut className="size-4" />
               Sign out
             </Button>
+            <a
+              href="/api/admin/google/start"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[#00b8ff]/40 px-4 text-sm font-semibold text-[#73d9ff] transition hover:bg-[#00b8ff]/10"
+            >
+              <Mail className="size-4" />
+              Connect Gmail
+            </a>
           </header>
 
           <div className="mt-5 flex gap-2 overflow-x-auto pb-2 lg:hidden">
