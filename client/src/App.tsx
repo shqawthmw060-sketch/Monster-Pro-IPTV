@@ -14,9 +14,7 @@ import AdminSection from "./pages/AdminSection";
 function Router() {
   return (
     <Switch>
-      <Route path="/">
-        <AccessGate />
-      </Route>
+      <Route path="/" component={Home} />
       <Route path="/login">
         <AccessGate />
       </Route>
