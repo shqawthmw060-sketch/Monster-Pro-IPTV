@@ -4,7 +4,7 @@
   "outputDirectory": "dist/public",
   "rewrites": [
     {
-      "source": "/((?!api(?:/|$)|googlefa19e01a3d44916f\\.html$).*)",
+      "source": "/((?!api(?:/|$)|googlefa19e01a3d44916f\\.html$|robots\\.txt$|sitemap\\.xml$).*)",
       "destination": "/index.html"
     }
   ]
