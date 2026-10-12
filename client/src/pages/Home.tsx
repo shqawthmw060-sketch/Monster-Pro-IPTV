@@ -115,8 +115,8 @@ export default function Home() {
                 Premium broadcast control
               </div>
               <h1 className="max-w-3xl text-5xl font-black leading-[0.96] tracking-[-0.04em] text-white sm:text-7xl">
-                Your screen.
-                <span className="block text-[#00b8ff]">Your signal.</span>
+                Monster Pro IPTV.
+                <span className="block text-[#00b8ff]">Your screen. Your signal.</span>
               </h1>
               <p className="mt-7 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">
                 MONSTER IPTV brings your authorized live and on-demand
@@ -184,8 +184,8 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#ffc300]">
               The MONSTER standard
             </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              A sharper way to watch.
+              <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              The Monster Pro IPTV streaming experience.
             </h2>
             <p className="mt-4 leading-7 text-slate-400">
               No invented catalog, no fake ratings, and no placeholder

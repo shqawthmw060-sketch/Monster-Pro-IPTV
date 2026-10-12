@@ -281,7 +281,7 @@ export function registerAdminRoutes(app: Express) {
 
     const bootstrapHash = String(
       process.env.ADMIN_PASSWORD_HASH ?? "",
-    );
+    ).trim();
 
     const bootstrapRole =
       process.env.ADMIN_ROLE === "super_admin"
@@ -306,25 +306,25 @@ export function registerAdminRoutes(app: Express) {
     let credentialsValid = false;
     let role: AdminRole = bootstrapRole;
 
-    if (stored?.setupComplete) {
+    // Explicit Vercel credentials are authoritative. This allows the owner to
+    // rotate credentials without being locked out by an older Neon setup row.
+    if (bootstrapEmail && bootstrapHash) {
+      credentialsValid =
+        email === bootstrapEmail &&
+        (await verifyPassword(password, bootstrapHash));
+
+      role = bootstrapRole;
+    } else if (stored?.setupComplete) {
       credentialsValid =
         email === stored.email &&
         (await verifyPassword(password, stored.passwordHash));
 
       role = stored.role;
     } else {
-      if (!bootstrapEmail || !bootstrapHash) {
-        response.status(503).json({
-          error: "Administrative sign-in is not configured.",
-        });
-        return;
-      }
-
-      credentialsValid =
-        email === bootstrapEmail &&
-        (await verifyPassword(password, bootstrapHash));
-
-      role = bootstrapRole;
+      response.status(503).json({
+        error: "Administrative sign-in is not configured.",
+      });
+      return;
     }
 
     if (!credentialsValid) {
