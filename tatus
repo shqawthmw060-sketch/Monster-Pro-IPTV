@@ -1,0 +1,77 @@
+[1mdiff --git a/api/access/login.ts b/api/access/login.ts[m
+[1mindex 12de68b..15965b6 100644[m
+[1m--- a/api/access/login.ts[m
+[1m+++ b/api/access/login.ts[m
+[36m@@ -1,5 +1,5 @@[m
+ import type { Request, Response } from "express";[m
+[31m-import { handleExpress } from "../_express";[m
+[32m+[m[32mimport { handleExpress } from "../_express.js";[m
+ [m
+ export default function handler(request: Request, response: Response) {[m
+   return handleExpress(request, response, "/api/access/login");[m
+[1mdiff --git a/api/access/logout.ts b/api/access/logout.ts[m
+[1mindex d1b8924..4be4fa6 100644[m
+[1m--- a/api/access/logout.ts[m
+[1m+++ b/api/access/logout.ts[m
+[36m@@ -1,5 +1,5 @@[m
+ import type { Request, Response } from "express";[m
+[31m-import { handleExpress } from "../_express";[m
+[32m+[m[32mimport { handleExpress } from "../_express.js";[m
+ [m
+ export default function handler(request: Request, response: Response) {[m
+   return handleExpress(request, response, "/api/access/logout");[m
+[1mdiff --git a/api/access/me.ts b/api/access/me.ts[m
+[1mindex 178a26f..e1cc470 100644[m
+[1m--- a/api/access/me.ts[m
+[1m+++ b/api/access/me.ts[m
+[36m@@ -1,5 +1,5 @@[m
+ import type { Request, Response } from "express";[m
+[31m-import { handleExpress } from "../_express";[m
+[32m+[m[32mimport { handleExpress } from "../_express.js";[m
+ [m
+ export default function handler(request: Request, response: Response) {[m
+   return handleExpress(request, response, "/api/access/me");[m
+[1mdiff --git a/api/admin/login.ts b/api/admin/login.ts[m
+[1mindex bf3b2ae..615a8a2 100644[m
+[1m--- a/api/admin/login.ts[m
+[1m+++ b/api/admin/login.ts[m
+[36m@@ -1,5 +1,5 @@[m
+ import type { Request, Response } from "express";[m
+[31m-import { handleExpress } from "../_express";[m
+[32m+[m[32mimport { handleExpress } from "../_express.js";[m
+ [m
+ export default function handler(request: Request, response: Response) {[m
+   return handleExpress(request, response, "/api/admin/login");[m
+[1mdiff --git a/api/admin/logout.ts b/api/admin/logout.ts[m
+[1mindex cc484de..6539396 100644[m
+[1m--- a/api/admin/logout.ts[m
+[1m+++ b/api/admin/logout.ts[m
+[36m@@ -1,5 +1,5 @@[m
+ import type { Request, Response } from "express";[m
+[31m-import { handleExpress } from "../_express";[m
+[32m+[m[32mimport { handleExpress } from "../_express.js";[m
+ [m
+ export default function handler(request: Request, response: Response) {[m
+   return handleExpress(request, response, "/api/admin/logout");[m
+[1mdiff --git a/api/admin/me.ts b/api/admin/me.ts[m
+[1mindex dea1257..5b7f8cc 100644[m
+[1m--- a/api/admin/me.ts[m
+[1m+++ b/api/admin/me.ts[m
+[36m@@ -1,5 +1,5 @@[m
+ import type { Request, Response } from "express";[m
+[31m-import { handleExpress } from "../_express";[m
+[32m+[m[32mimport { handleExpress } from "../_express.js";[m
+ [m
+ export default function handler(request: Request, response: Response) {[m
+   return handleExpress(request, response, "/api/admin/me");[m
+[1mdiff --git a/api/admin/overview.ts b/api/admin/overview.ts[m
+[1mindex 615f9f0..865d74c 100644[m
+[1m--- a/api/admin/overview.ts[m
+[1m+++ b/api/admin/overview.ts[m
+[36m@@ -1,5 +1,5 @@[m
+ import type { Request, Response } from "express";[m
+[31m-import { handleExpress } from "../_express";[m
+[32m+[m[32mimport { handleExpress } from "../_express.js";[m
+ [m
+ export default function handler(request: Request, response: Response) {[m
+   return handleExpress(request, response, "/api/admin/overview");[m

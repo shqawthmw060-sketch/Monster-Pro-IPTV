@@ -114,3 +114,6 @@ client/public/__manus__/version.json
 android/app/monster-iptv-release.keystore
 android/keystore.properties
 package-lock.json
+.vercel
+.env*
+google-credentials.json
