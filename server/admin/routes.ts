@@ -512,21 +512,22 @@ export function registerAdminRoutes(app: Express) {
   app.post("/api/admin/access-accounts", async (request, response) => {
     if (!requireAdmin(request, response)) return;
     const displayName = String(request.body?.displayName ?? "").trim();
+    const phoneNumber = String(request.body?.phoneNumber ?? "").replace(/[^0-9+]/g, "").trim();
     const requestedMac = normalizeMacAddress(String(request.body?.macAddress ?? ""));
     const username = String(request.body?.username ?? "").trim();
     const generatedMac = randomBytes(6).toString("hex").toUpperCase();
     const macAddress = requestedMac || generatedMac;
     const password = String(request.body?.password ?? "") || randomBytes(9).toString("base64url");
     const expiresAt = request.body?.expiresAt ? new Date(String(request.body.expiresAt)) : null;
-    if (!displayName || !isValidMacAddress(macAddress) || username.length < 3 || (expiresAt && Number.isNaN(expiresAt.getTime()))) {
+    if (!displayName || !/^\+?[1-9][0-9]{8,14}$/.test(phoneNumber) || !isValidMacAddress(macAddress) || username.length < 3 || (expiresAt && Number.isNaN(expiresAt.getTime()))) {
       response.status(400).json({ error: "بيانات الاشتراك غير مكتملة أو غير صحيحة." });
       return;
     }
     try {
       const accountId = `acct_${randomBytes(12).toString("hex")}`;
-      await db.insert(iptvAccounts).values({ accountId, userId: accountId, displayName, macAddress, username, passwordHash: await hashPassword(password), status: "active", expiresAt });
+      await db.insert(iptvAccounts).values({ accountId, userId: accountId, displayName, phoneNumber, macAddress, username, passwordHash: await hashPassword(password), status: "active", expiresAt });
       await db.insert(auditLogs).values({ action: "admin_access_account_created", resourceType: "iptv_account", resourceId: accountId, metadata: { username, macAddress } });
-      response.status(201).json({ accountId, macAddress, username, password, message: "Subscription created." });
+      response.status(201).json({ accountId, phoneNumber, macAddress, username, password, message: "Subscription created." });
     } catch (error) {
       console.error("admin access account creation failed", error instanceof Error ? error.message : "unknown error");
       response.status(409).json({ error: "تعذر إنشاء الاشتراك. تحقق من عدم تكرار MAC أو Username." });

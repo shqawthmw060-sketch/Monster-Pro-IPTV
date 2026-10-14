@@ -135,6 +135,7 @@ export const iptvAccounts = pgTable("iptv_accounts", {
   accountId: text("account_id").primaryKey(),
   userId: text("user_id").notNull(),
   displayName: text("display_name").notNull(),
+  phoneNumber: text("phone_number"),
   macAddress: text("mac_address").notNull(),
   username: text("username").notNull(),
   passwordHash: text("password_hash").notNull(),

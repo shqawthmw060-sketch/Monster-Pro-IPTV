@@ -7,6 +7,18 @@
       "handle": "filesystem"
     },
     {
+      "src": "/api/admin/google/start",
+      "dest": "/api/admin/login"
+    },
+    {
+      "src": "/api/admin/google/callback",
+      "dest": "/api/admin/login"
+    },
+    {
+      "src": "/api/admin/access-decision",
+      "dest": "/api/admin/login"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
