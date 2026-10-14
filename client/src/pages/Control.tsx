@@ -17,6 +17,7 @@ import {
   Wifi,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ControlContentManager from "@/components/control/ControlContentManager";
 import {
   Card,
   CardContent,
@@ -48,7 +49,9 @@ const navigation = [
   ["/control", "Dashboard", LayoutDashboard],
   ["/control/users", "Users", Users],
   ["/control/devices", "Devices", Wifi],
-  ["/control/content", "Content", Video],
+  ["/control/content", "Content & links", Video],
+  ["/control/subscriptions", "Subscriptions", ShieldCheck],
+  ["/control/settings", "Backgrounds & codes", Database],
   ["/control/sources", "Sources", Database],
   ["/control/analytics", "Analytics", BarChart3],
   ["/control/logs", "Audit logs", FileText],
@@ -462,6 +465,8 @@ export default function Control() {
               </CardContent>
             </Card>
           </section>
+
+          <ControlContentManager />
 
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/">

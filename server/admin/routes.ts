@@ -9,6 +9,7 @@ import {
   devices,
   iptvAccounts,
   mediaItems,
+  mediaSources,
   subscriptions,
   users,
 } from "../db/persistentSchema.js";
@@ -22,6 +23,8 @@ import {
 import {
   createSessionToken,
   hashPassword,
+  isValidMacAddress,
+  normalizeMacAddress,
   verifyPassword,
 } from "../auth/credentials.js";
 
@@ -459,6 +462,83 @@ export function registerAdminRoutes(app: Express) {
         error: "Unable to save the administrator account right now.",
       });
     }
+  });
+
+  app.post("/api/admin/content", async (request, response) => {
+    if (!requireAdmin(request, response)) return;
+
+    const kind = ["movie", "series", "channel"].includes(request.body?.kind)
+      ? request.body.kind
+      : null;
+    const title = String(request.body?.title ?? "").trim();
+    const slug = String(request.body?.slug ?? "").trim().toLowerCase();
+    const sourceUrl = String(request.body?.sourceUrl ?? "").trim();
+    const providerName = String(request.body?.providerName ?? "").trim();
+
+    if (!kind || !title || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !/^https?:\/\//i.test(sourceUrl) || !providerName) {
+      response.status(400).json({ error: "نوع المحتوى والعنوان وSlug والرابط والمصدر مطلوبة." });
+      return;
+    }
+    if (request.body?.isAuthorized !== true) {
+      response.status(400).json({ error: "يجب تأكيد أن مصدر المحتوى قانوني ومصرح بعرضه." });
+      return;
+    }
+
+    try {
+      const [item] = await db.insert(mediaItems).values({
+        kind,
+        title,
+        slug,
+        synopsis: String(request.body?.synopsis ?? "").trim() || null,
+        posterUrl: String(request.body?.posterUrl ?? "").trim() || null,
+        isPublished: request.body?.isPublished === true,
+      }).returning({ id: mediaItems.id });
+      await db.insert(mediaSources).values({
+        mediaId: item.id,
+        kind: "external",
+        sourceUrl,
+        providerName,
+        isAuthorized: true,
+        isActive: true,
+      });
+      await db.insert(auditLogs).values({ action: "admin_content_created", resourceType: "media_item", resourceId: item.id, metadata: { kind, title, providerName } });
+      response.status(201).json({ id: item.id, message: "Content saved." });
+    } catch (error) {
+      console.error("admin content creation failed", error instanceof Error ? error.message : "unknown error");
+      response.status(409).json({ error: "تعذر حفظ المحتوى. تأكد أن الـ Slug غير مستخدم." });
+    }
+  });
+
+  app.post("/api/admin/access-accounts", async (request, response) => {
+    if (!requireAdmin(request, response)) return;
+    const displayName = String(request.body?.displayName ?? "").trim();
+    const macAddress = normalizeMacAddress(String(request.body?.macAddress ?? ""));
+    const username = String(request.body?.username ?? "").trim();
+    const password = String(request.body?.password ?? "");
+    const expiresAt = request.body?.expiresAt ? new Date(String(request.body.expiresAt)) : null;
+    if (!displayName || !isValidMacAddress(macAddress) || username.length < 3 || password.length < 1 || (expiresAt && Number.isNaN(expiresAt.getTime()))) {
+      response.status(400).json({ error: "بيانات الاشتراك غير مكتملة أو غير صحيحة." });
+      return;
+    }
+    try {
+      const accountId = `acct_${randomBytes(12).toString("hex")}`;
+      await db.insert(iptvAccounts).values({ accountId, userId: accountId, displayName, macAddress, username, passwordHash: await hashPassword(password), status: "active", expiresAt });
+      await db.insert(auditLogs).values({ action: "admin_access_account_created", resourceType: "iptv_account", resourceId: accountId, metadata: { username, macAddress } });
+      response.status(201).json({ accountId, message: "Subscription created." });
+    } catch (error) {
+      console.error("admin access account creation failed", error instanceof Error ? error.message : "unknown error");
+      response.status(409).json({ error: "تعذر إنشاء الاشتراك. تحقق من عدم تكرار MAC أو Username." });
+    }
+  });
+
+  app.post("/api/admin/settings", async (request, response) => {
+    if (!requireAdmin(request, response)) return;
+    const visual = request.body?.visual && typeof request.body.visual === "object" ? request.body.visual : {};
+    const links = request.body?.links && typeof request.body.links === "object" ? request.body.links : {};
+    await db.insert(appSettings).values({ key: "public_links", value: links, isPublic: true }).onConflictDoUpdate({ target: appSettings.key, set: { value: links, isPublic: true, updatedAt: new Date() } });
+    await db.insert(appSettings).values({ key: "visual_assets", value: visual, isPublic: true }).onConflictDoUpdate({ target: appSettings.key, set: { value: visual, isPublic: true, updatedAt: new Date() } });
+    await db.insert(auditLogs).values({ action: "admin_settings_updated", resourceType: "app_settings", resourceId: "public_links,visual_assets" });
+    response.json({ message: "Settings saved." });
   });
 
   app.get("/api/admin/overview", async (request, response) => {

@@ -10,6 +10,7 @@ import Catalog from "./pages/Catalog";
 import AdminLogin from "./pages/AdminLogin";
 import Control from "./pages/Control";
 import AdminSection from "./pages/AdminSection";
+import ControlContentManager from "./components/control/ControlContentManager";
 
 function Router() {
   return (
@@ -36,11 +37,13 @@ function Router() {
         />
       </Route>
       <Route path="/control/content">
-        <AdminSection
-          title="Content management"
-          scope="CONTENT"
-          description="Movies, series, seasons, episodes, and legal stream variants will be managed from the content server APIs."
-        />
+        <main className="min-h-screen bg-[#050b12] px-5 py-8 text-white sm:px-8"><div className="mx-auto max-w-6xl"><h1 className="text-3xl font-black">Content & links</h1><ControlContentManager /></div></main>
+      </Route>
+      <Route path="/control/subscriptions">
+        <main className="min-h-screen bg-[#050b12] px-5 py-8 text-white sm:px-8"><div className="mx-auto max-w-6xl"><h1 className="text-3xl font-black">Subscriptions & customer access</h1><ControlContentManager /></div></main>
+      </Route>
+      <Route path="/control/settings">
+        <main className="min-h-screen bg-[#050b12] px-5 py-8 text-white sm:px-8"><div className="mx-auto max-w-6xl"><h1 className="text-3xl font-black">Backgrounds, social links & codes</h1><ControlContentManager /></div></main>
       </Route>
       <Route path="/control/sources">
         <AdminSection
