@@ -9,6 +9,7 @@ import app from "../server/index.js";
 export function handleExpress(request: Request, response: Response, routePath?: string) {
   if (routePath) {
     request.url = routePath;
+    request.originalUrl = routePath;
   }
   return app(request, response);
 }
