@@ -26,6 +26,7 @@ export default function ControlContentManager() {
   const [account, setAccount] = useState({ displayName: "", macAddress: "", username: "", password: "", expiresAt: "" });
   const [visual, setVisual] = useState({ backgroundUrl: "", logoUrl: "", qrCodeText: "", customCode: "" });
   const [links, setLinks] = useState({ whatsapp: "01508536392", facebook: "", instagram: "", telegram: "", youtube: "" });
+  const [createdCredentials, setCreatedCredentials] = useState<{ macAddress: string; username: string; password: string } | null>(null);
   const [busy, setBusy] = useState(false);
 
   function update<T extends object>(setter: Dispatch<SetStateAction<T>>, key: keyof T, value: string | boolean) {
@@ -45,7 +46,8 @@ export default function ControlContentManager() {
   async function submitAccount(event: FormEvent) {
     event.preventDefault(); setBusy(true); setNotice(null);
     try {
-      await post("/api/admin/access-accounts", account);
+      const result = await post("/api/admin/access-accounts", { ...account, macAddress: "", password: "" }) as { macAddress: string; username: string; password: string };
+      setCreatedCredentials({ macAddress: result.macAddress, username: result.username, password: result.password });
       setNotice({ type: "success", text: "تم إنشاء الاشتراك. يمكن للعميل استخدام MAC واسم المستخدم وكلمة المرور." });
       setAccount({ displayName: "", macAddress: "", username: "", password: "", expiresAt: "" });
     } catch (error) { setNotice({ type: "error", text: error instanceof Error ? error.message : "تعذر إنشاء الاشتراك." }); }
@@ -77,14 +79,14 @@ export default function ControlContentManager() {
         <Button disabled={busy} className="bg-[#00b8ff] font-bold text-[#03101b] hover:bg-[#73d9ff] sm:col-span-2"><Plus className="mr-2 size-4" />حفظ المحتوى</Button>
       </form></CardContent></Card>
 
-      <Card className="border-white/10 bg-[#0b1c2f]"><CardHeader><CardTitle className="flex items-center gap-2 text-white"><Ticket className="size-5 text-[#73d9ff]" />إنشاء اشتراك عميل</CardTitle><p className="text-sm text-slate-400">ينشئ حساب MAC حقيقيًا في Neon، ولا يتم عرض كلمة المرور بعد الحفظ.</p></CardHeader><CardContent><form onSubmit={submitAccount} className="grid gap-4 sm:grid-cols-2">
+      <Card className="border-white/10 bg-[#0b1c2f]"><CardHeader><CardTitle className="flex items-center gap-2 text-white"><Ticket className="size-5 text-[#73d9ff]" />إنشاء اشتراك عميل</CardTitle><p className="text-sm text-slate-400">سيتم توليد MAC وكلمة المرور تلقائيًا من الخادم بعد الحفظ.</p></CardHeader><CardContent><form onSubmit={submitAccount} className="grid gap-4 sm:grid-cols-2">
         <label className="text-sm text-slate-200">اسم العميل<input required className={inputClass} value={account.displayName} onChange={e => update(setAccount, "displayName", e.target.value)} /></label>
-        <label className="text-sm text-slate-200">MAC Address<input required className={inputClass} value={account.macAddress} onChange={e => update(setAccount, "macAddress", e.target.value)} placeholder="00:11:22:33:44:55" /></label>
+        <div className="rounded-lg border border-dashed border-[#00b8ff]/30 bg-[#07111d] p-3 text-sm text-slate-400">MAC Address<br /><span className="text-[#73d9ff]">يُولّد تلقائيًا</span></div>
         <label className="text-sm text-slate-200">Username<input required className={inputClass} value={account.username} onChange={e => update(setAccount, "username", e.target.value)} /></label>
-        <label className="text-sm text-slate-200">Password<input required type="password" className={inputClass} value={account.password} onChange={e => update(setAccount, "password", e.target.value)} /></label>
+        <div className="rounded-lg border border-dashed border-[#00b8ff]/30 bg-[#07111d] p-3 text-sm text-slate-400">Password<br /><span className="text-[#73d9ff]">تُولّد تلقائيًا</span></div>
         <label className="text-sm text-slate-200 sm:col-span-2">تاريخ الانتهاء<input type="datetime-local" className={inputClass} value={account.expiresAt} onChange={e => update(setAccount, "expiresAt", e.target.value)} /></label>
         <Button disabled={busy} className="bg-emerald-500 font-bold text-black hover:bg-emerald-300 sm:col-span-2"><Radio className="mr-2 size-4" />إنشاء الاشتراك</Button>
-      </form></CardContent></Card>
+      </form>{createdCredentials && <div className="mt-5 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-sm text-emerald-100"><p className="font-bold">بيانات الاشتراك الجديدة</p><p className="mt-2">MAC: <b>{createdCredentials.macAddress}</b></p><p>Username: <b>{createdCredentials.username}</b></p><p>Password: <b>{createdCredentials.password}</b></p><Button type="button" className="mt-4 bg-[#25D366] font-bold text-black hover:bg-[#7af0a6]" onClick={() => { const message = `بيانات اشتراك MONSTER IPTV%0A%0AMAC: ${createdCredentials.macAddress}%0AUsername: ${createdCredentials.username}%0APassword: ${createdCredentials.password}`; window.open(`https://wa.me/201508536392?text=${message}`, "_blank", "noopener,noreferrer"); }}>إرسال البيانات عبر WhatsApp</Button></div>}</CardContent></Card>
     </div>
 
     <Card className="border-white/10 bg-[#0b1c2f]"><CardHeader><CardTitle className="flex items-center gap-2 text-white"><Image className="size-5 text-[#73d9ff]" />الخلفيات والروابط الاجتماعية والأكواد</CardTitle><p className="text-sm text-slate-400">هذه القيم تحفظ في إعدادات التطبيق. لا تضع هنا مفاتيح سرية أو كلمات مرور.</p></CardHeader><CardContent><form onSubmit={submitSettings} className="grid gap-4 md:grid-cols-2">
