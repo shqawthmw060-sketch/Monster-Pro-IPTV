@@ -494,14 +494,20 @@ export function registerAdminRoutes(app: Express) {
         posterUrl: String(request.body?.posterUrl ?? "").trim() || null,
         isPublished: true,
       }).returning({ id: mediaItems.id });
-      await db.insert(mediaSources).values({
-        mediaId: item.id,
-        kind: "external",
-        sourceUrl,
-        providerName,
-        isAuthorized: true,
-        isActive: true,
-      });
+      try {
+        await db.insert(mediaSources).values({
+          mediaId: item.id,
+          kind: "external",
+          sourceUrl,
+          providerName,
+          isAuthorized: true,
+          isActive: true,
+        });
+      } catch (sourceError) {
+        console.error("admin media source creation failed", sourceError instanceof Error ? sourceError.message : "unknown error");
+        response.status(503).json({ error: "تم إنشاء العنوان لكن تعذر حفظ الرابط. طبّق Migration جداول media_sources في Neon.", code: (sourceError as { code?: string })?.code ?? "SOURCE_INSERT_FAILED" });
+        return;
+      }
       try {
         await db.insert(auditLogs).values({ action: "admin_content_created", resourceType: "media_item", resourceId: item.id, metadata: { kind, title, providerName } });
       } catch (auditError) {
@@ -510,8 +516,9 @@ export function registerAdminRoutes(app: Express) {
       response.status(201).json({ id: item.id, message: "Content saved." });
     } catch (error) {
       const message = error instanceof Error ? error.message : "unknown database error";
-      console.error("admin content creation failed", message);
-      response.status(503).json({ error: `تعذر حفظ المحتوى: ${message.includes("does not exist") ? "جداول المحتوى غير موجودة في Neon؛ طبّق Migration المحتوى." : "تحقق من رابط المحتوى وإعدادات قاعدة البيانات."}` });
+      const code = (error as { code?: string })?.code ?? "CONTENT_INSERT_FAILED";
+      console.error("admin content creation failed", code, message);
+      response.status(503).json({ error: message.includes("does not exist") ? "جداول المحتوى غير موجودة في Neon؛ طبّق Migration المحتوى." : "تعذر إنشاء سجل المحتوى في Neon.", code });
     }
   });
 
