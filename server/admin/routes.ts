@@ -502,11 +502,16 @@ export function registerAdminRoutes(app: Express) {
         isAuthorized: true,
         isActive: true,
       });
-      await db.insert(auditLogs).values({ action: "admin_content_created", resourceType: "media_item", resourceId: item.id, metadata: { kind, title, providerName } });
+      try {
+        await db.insert(auditLogs).values({ action: "admin_content_created", resourceType: "media_item", resourceId: item.id, metadata: { kind, title, providerName } });
+      } catch (auditError) {
+        console.error("content audit log unavailable", auditError instanceof Error ? auditError.message : "unknown error");
+      }
       response.status(201).json({ id: item.id, message: "Content saved." });
     } catch (error) {
-      console.error("admin content creation failed", error instanceof Error ? error.message : "unknown error");
-      response.status(409).json({ error: "تعذر حفظ المحتوى. تأكد أن الـ Slug غير مستخدم." });
+      const message = error instanceof Error ? error.message : "unknown database error";
+      console.error("admin content creation failed", message);
+      response.status(503).json({ error: `تعذر حفظ المحتوى: ${message.includes("does not exist") ? "جداول المحتوى غير موجودة في Neon؛ طبّق Migration المحتوى." : "تحقق من رابط المحتوى وإعدادات قاعدة البيانات."}` });
     }
   });
 
