@@ -22,7 +22,7 @@ async function post(path: string, body: unknown) {
 
 export default function ControlContentManager() {
   const [notice, setNotice] = useState<Notice>(null);
-  const [content, setContent] = useState({ kind: "movie", title: "", slug: "", synopsis: "", posterUrl: "", sourceUrl: "", providerName: "", isAuthorized: true, isPublished: true });
+  const [content, setContent] = useState({ kind: "movie", posterUrl: "", sourceUrl: "", isAuthorized: true });
   const [account, setAccount] = useState({ displayName: "", phoneNumber: "", macAddress: "", username: "", password: "", expiresAt: "" });
   const [visual, setVisual] = useState({ backgroundUrl: "", logoUrl: "", qrCodeText: "", customCode: "" });
   const [links, setLinks] = useState({ whatsapp: "01508536392", facebook: "", instagram: "", telegram: "", youtube: "" });
@@ -38,7 +38,7 @@ export default function ControlContentManager() {
     try {
       await post("/api/admin/content", content);
       setNotice({ type: "success", text: "تم حفظ المحتوى والرابط بنجاح." });
-      setContent(previous => ({ ...previous, title: "", slug: "", synopsis: "", posterUrl: "", sourceUrl: "", providerName: "" }));
+      setContent(previous => ({ ...previous, posterUrl: "", sourceUrl: "" }));
     } catch (error) { setNotice({ type: "error", text: error instanceof Error ? error.message : "تعذر الحفظ." }); }
     finally { setBusy(false); }
   }
@@ -67,14 +67,10 @@ export default function ControlContentManager() {
     {notice && <div className={`rounded-xl border px-4 py-3 text-sm ${notice.type === "success" ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200" : "border-red-400/30 bg-red-400/10 text-red-200"}`}>{notice.text}</div>}
 
     <div className="grid gap-5 xl:grid-cols-2">
-      <Card className="border-white/10 bg-[#0b1c2f]"><CardHeader><CardTitle className="flex items-center gap-2 text-white"><Link2 className="size-5 text-[#73d9ff]" />إضافة رابط محتوى</CardTitle><p className="text-sm text-slate-400">أفلام، مسلسلات، وقنوات. استخدم روابط تملك حق عرضها أو روابط رسمية مسموح بتضمينها.</p></CardHeader><CardContent><form onSubmit={submitContent} className="grid gap-4 sm:grid-cols-2">
+      <Card className="border-white/10 bg-[#0b1c2f]"><CardHeader><CardTitle className="flex items-center gap-2 text-white"><Link2 className="size-5 text-[#73d9ff]" />إضافة رابط محتوى</CardTitle><p className="text-sm text-slate-400">اختر فيلمًا أو مسلسلًا أو قناة، ثم أدخل الرابط واللوجو فقط.</p></CardHeader><CardContent><form onSubmit={submitContent} className="grid gap-4">
         <label className="text-sm text-slate-200">النوع<select className={inputClass} value={content.kind} onChange={e => update(setContent, "kind", e.target.value)}><option value="movie">فيلم</option><option value="series">مسلسل</option><option value="channel">قناة</option></select></label>
-        <label className="text-sm text-slate-200">العنوان<input required className={inputClass} value={content.title} onChange={e => update(setContent, "title", e.target.value)} /></label>
-        <label className="text-sm text-slate-200">Slug<input required className={inputClass} value={content.slug} onChange={e => update(setContent, "slug", e.target.value)} placeholder="my-title" /></label>
-        <label className="text-sm text-slate-200">مزود/مصدر الرابط<input required className={inputClass} value={content.providerName} onChange={e => update(setContent, "providerName", e.target.value)} placeholder="Official / Public Domain" /></label>
-        <label className="text-sm text-slate-200 sm:col-span-2">رابط المشاهدة أو التضمين<input required type="url" className={inputClass} value={content.sourceUrl} onChange={e => update(setContent, "sourceUrl", e.target.value)} /></label>
-        <label className="text-sm text-slate-200 sm:col-span-2">رابط الملصق<input type="url" className={inputClass} value={content.posterUrl} onChange={e => update(setContent, "posterUrl", e.target.value)} /></label>
-        <label className="text-sm text-slate-200 sm:col-span-2">الوصف<textarea className="mt-2 min-h-20 w-full rounded-lg border border-white/15 bg-[#07111d] p-3 text-white outline-none focus:border-[#00b8ff]" value={content.synopsis} onChange={e => update(setContent, "synopsis", e.target.value)} /></label>
+        <label className="text-sm text-slate-200">رابط المشاهدة أو التضمين<input required type="url" className={inputClass} value={content.sourceUrl} onChange={e => update(setContent, "sourceUrl", e.target.value)} /></label>
+        <label className="text-sm text-slate-200">رابط اللوجو<input type="url" className={inputClass} value={content.posterUrl} onChange={e => update(setContent, "posterUrl", e.target.value)} /></label>
         <label className="flex items-center gap-2 text-sm text-slate-300 sm:col-span-2"><input type="checkbox" checked={content.isAuthorized} onChange={e => update(setContent, "isAuthorized", e.target.checked)} />أؤكد أن المصدر قانوني ومصرح بعرضه</label>
         <Button disabled={busy} className="bg-[#00b8ff] font-bold text-[#03101b] hover:bg-[#73d9ff] sm:col-span-2"><Plus className="mr-2 size-4" />حفظ المحتوى</Button>
       </form></CardContent></Card>

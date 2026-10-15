@@ -470,13 +470,14 @@ export function registerAdminRoutes(app: Express) {
     const kind = ["movie", "series", "channel"].includes(request.body?.kind)
       ? request.body.kind
       : null;
-    const title = String(request.body?.title ?? "").trim();
-    const slug = String(request.body?.slug ?? "").trim().toLowerCase();
+    const generatedTitle = `${kind === "movie" ? "Movie" : kind === "series" ? "Series" : "Channel"} ${Date.now()}`;
+    const title = String(request.body?.title ?? generatedTitle).trim();
+    const slug = `${kind}-${Date.now()}-${randomBytes(3).toString("hex")}`;
     const sourceUrl = String(request.body?.sourceUrl ?? "").trim();
-    const providerName = String(request.body?.providerName ?? "").trim();
+    const providerName = String(request.body?.providerName ?? "Admin supplied").trim();
 
-    if (!kind || !title || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !/^https?:\/\//i.test(sourceUrl) || !providerName) {
-      response.status(400).json({ error: "نوع المحتوى والعنوان وSlug والرابط والمصدر مطلوبة." });
+    if (!kind || !/^https?:\/\//i.test(sourceUrl) || !providerName) {
+      response.status(400).json({ error: "اختر النوع وأدخل رابط المحتوى." });
       return;
     }
     if (request.body?.isAuthorized !== true) {
@@ -491,7 +492,7 @@ export function registerAdminRoutes(app: Express) {
         slug,
         synopsis: String(request.body?.synopsis ?? "").trim() || null,
         posterUrl: String(request.body?.posterUrl ?? "").trim() || null,
-        isPublished: request.body?.isPublished === true,
+        isPublished: true,
       }).returning({ id: mediaItems.id });
       await db.insert(mediaSources).values({
         mediaId: item.id,
@@ -557,19 +558,19 @@ export function registerAdminRoutes(app: Express) {
         subscriptionsCount,
         auditCount,
       ] = await Promise.all([
-        db.select({ value: count() }).from(users),
-        db.select({ value: count() }).from(devices),
+        db.select({ value: count() }).from(users).catch(() => [{ value: 0 }]),
+        db.select({ value: count() }).from(devices).catch(() => [{ value: 0 }]),
         db
           .select({ value: count() })
           .from(mediaItems)
-          .where(eq(mediaItems.kind, "movie")),
+          .where(eq(mediaItems.kind, "movie")).catch(() => [{ value: 0 }]),
         db
           .select({ value: count() })
           .from(mediaItems)
-          .where(eq(mediaItems.kind, "series")),
-        db.select({ value: count() }).from(iptvAccounts),
-        db.select({ value: count() }).from(subscriptions),
-        db.select({ value: count() }).from(auditLogs),
+          .where(eq(mediaItems.kind, "series")).catch(() => [{ value: 0 }]),
+        db.select({ value: count() }).from(iptvAccounts).catch(() => [{ value: 0 }]),
+        db.select({ value: count() }).from(subscriptions).catch(() => [{ value: 0 }]),
+        db.select({ value: count() }).from(auditLogs).catch(() => [{ value: 0 }]),
       ]);
 
       response.json({
