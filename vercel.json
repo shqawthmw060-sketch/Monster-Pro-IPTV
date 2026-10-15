@@ -7,6 +7,10 @@
       "handle": "filesystem"
     },
     {
+      "src": "/api/admin/(.*)",
+      "dest": "/api/admin"
+    },
+    {
       "src": "/api/admin/google/start",
       "dest": "/api/admin/login"
     },

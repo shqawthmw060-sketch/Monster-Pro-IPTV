@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { handleExpress } from "../_express.js";
+import app from "../server/index.js";
 
 export default function handler(request: Request, response: Response) {
-  return handleExpress(request, response);
+  return app(request, response);
 }
