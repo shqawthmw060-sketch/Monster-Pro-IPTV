@@ -28,6 +28,8 @@ export default function ControlContentManager() {
   const [links, setLinks] = useState({ whatsapp: "01508536392", facebook: "", instagram: "", telegram: "", youtube: "" });
   const [createdCredentials, setCreatedCredentials] = useState<{ phoneNumber: string; macAddress: string; username: string; password: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [bulk, setBulk] = useState({ kind: "channel", logoUrl: "", text: "" });
+  const [linkResults, setLinkResults] = useState<{ url: string; ok: boolean; status: number; error?: string }[]>([]);
 
   function update<T extends object>(setter: Dispatch<SetStateAction<T>>, key: keyof T, value: string | boolean) {
     setter(previous => ({ ...previous, [key]: value }));
@@ -54,6 +56,33 @@ export default function ControlContentManager() {
     finally { setBusy(false); }
   }
 
+  function readLinks(text: string) {
+    return Array.from(new Set(text.split(/[\n,;\t]+/).map(value => value.trim()).filter(value => /^https?:\/\//i.test(value))));
+  }
+
+  async function testBulkLinks() {
+    setBusy(true); setNotice(null); setLinkResults([]);
+    try {
+      const links = readLinks(bulk.text);
+      const result = await post("/api/admin/content/test-links", { links }) as { results: { url: string; ok: boolean; status: number; error?: string }[] };
+      setLinkResults(result.results);
+      setNotice({ type: result.results.some(item => item.ok) ? "success" : "error", text: `تم اختبار ${result.results.length} رابطًا؛ الصالح: ${result.results.filter(item => item.ok).length}.` });
+    } catch (error) { setNotice({ type: "error", text: error instanceof Error ? error.message : "تعذر اختبار الروابط." }); }
+    finally { setBusy(false); }
+  }
+
+  async function saveValidLinks() {
+    const valid = linkResults.filter(item => item.ok);
+    if (!valid.length) { setNotice({ type: "error", text: "اختبر الروابط أولًا؛ لا توجد روابط صالحة للحفظ." }); return; }
+    setBusy(true); setNotice(null);
+    try {
+      for (const item of valid) await post("/api/admin/content", { kind: bulk.kind, sourceUrl: item.url, posterUrl: bulk.logoUrl, isAuthorized: true });
+      setNotice({ type: "success", text: `تم حفظ ${valid.length} رابطًا صالحًا.` });
+      setLinkResults([]);
+    } catch (error) { setNotice({ type: "error", text: error instanceof Error ? error.message : "تعذر حفظ الروابط." }); }
+    finally { setBusy(false); }
+  }
+
   async function submitSettings(event: FormEvent) {
     event.preventDefault(); setBusy(true); setNotice(null);
     try {
@@ -74,6 +103,15 @@ export default function ControlContentManager() {
         <label className="flex items-center gap-2 text-sm text-slate-300 sm:col-span-2"><input type="checkbox" checked={content.isAuthorized} onChange={e => update(setContent, "isAuthorized", e.target.checked)} />أؤكد أن المصدر قانوني ومصرح بعرضه</label>
         <Button disabled={busy} className="bg-[#00b8ff] font-bold text-[#03101b] hover:bg-[#73d9ff] sm:col-span-2"><Plus className="mr-2 size-4" />حفظ المحتوى</Button>
       </form></CardContent></Card>
+
+      <Card className="border-white/10 bg-[#0b1c2f] xl:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2 text-white"><Link2 className="size-5 text-[#73d9ff]" />اختبار واستيراد روابط متعددة</CardTitle><p className="text-sm text-slate-400">الصق رابطًا واحدًا أو عدة روابط، أو ارفع ملف TXT/CSV. سيتم اختبار الوصول HTTP قبل الحفظ. استخدم مصادر قانونية ومصرحًا بها فقط.</p></CardHeader><CardContent className="grid gap-4 md:grid-cols-2">
+        <label className="text-sm text-slate-200">النوع<select className={inputClass} value={bulk.kind} onChange={e => setBulk(previous => ({ ...previous, kind: e.target.value }))}><option value="movie">فيلم</option><option value="series">مسلسل</option><option value="channel">قناة</option></select></label>
+        <label className="text-sm text-slate-200">رابط اللوجو (اختياري)<input type="url" className={inputClass} value={bulk.logoUrl} onChange={e => setBulk(previous => ({ ...previous, logoUrl: e.target.value }))} /></label>
+        <label className="text-sm text-slate-200 md:col-span-2">ملف TXT أو CSV<input type="file" accept=".txt,.csv,text/plain,text/csv" className="mt-2 block w-full rounded-lg border border-white/15 bg-[#07111d] p-3 text-slate-300" onChange={event => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setBulk(previous => ({ ...previous, text: String(reader.result ?? "") })); reader.readAsText(file); }} /></label>
+        <label className="text-sm text-slate-200 md:col-span-2">رابط واحد أو قائمة روابط<textarea className="mt-2 min-h-28 w-full rounded-lg border border-white/15 bg-[#07111d] p-3 text-white outline-none focus:border-[#00b8ff]" value={bulk.text} onChange={e => setBulk(previous => ({ ...previous, text: e.target.value }))} placeholder="https://example.com/stream.m3u8\nhttps://example.com/embed/123" /></label>
+        <div className="flex flex-wrap gap-3 md:col-span-2"><Button type="button" disabled={busy} onClick={testBulkLinks} className="bg-[#00b8ff] font-bold text-[#03101b] hover:bg-[#73d9ff]">اختبار الروابط</Button><Button type="button" disabled={busy || !linkResults.some(item => item.ok)} onClick={saveValidLinks} className="bg-emerald-500 font-bold text-black hover:bg-emerald-300">حفظ الروابط الصالحة</Button></div>
+        {linkResults.length > 0 && <div className="space-y-2 text-sm md:col-span-2">{linkResults.map(item => <div key={item.url} className={`rounded-lg border p-2 ${item.ok ? "border-emerald-400/30 text-emerald-200" : "border-red-400/30 text-red-200"}`}><span className="mr-2">{item.ok ? "✓" : "✕"}</span>{item.url} <span className="opacity-70">({item.status || item.error})</span></div>)}</div>}
+      </CardContent></Card>
 
       <Card className="border-white/10 bg-[#0b1c2f]"><CardHeader><CardTitle className="flex items-center gap-2 text-white"><Ticket className="size-5 text-[#73d9ff]" />إنشاء اشتراك عميل</CardTitle><p className="text-sm text-slate-400">سيتم توليد MAC وكلمة المرور تلقائيًا من الخادم بعد الحفظ.</p></CardHeader><CardContent><form onSubmit={submitAccount} className="grid gap-4 sm:grid-cols-2">
         <label className="text-sm text-slate-200">اسم العميل<input required className={inputClass} value={account.displayName} onChange={e => update(setAccount, "displayName", e.target.value)} /></label>

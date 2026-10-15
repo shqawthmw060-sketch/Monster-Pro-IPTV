@@ -522,6 +522,32 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  app.post("/api/admin/content/test-links", async (request, response) => {
+    if (!requireAdmin(request, response)) return;
+    const rawLinks = Array.isArray(request.body?.links) ? request.body.links : [];
+    const links: string[] = Array.from(new Set<string>(rawLinks.map((value: unknown) => String(value).trim()).filter((value: string) => /^https?:\/\//i.test(value)))).slice(0, 100);
+    if (!links.length) {
+      response.status(400).json({ error: "أدخل رابطًا واحدًا على الأقل أو ارفع ملفًا يحتوي على روابط HTTP/HTTPS." });
+      return;
+    }
+    const results = await Promise.all(links.map(async (url) => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 7000);
+      try {
+        let checked = await fetch(url, { method: "HEAD", redirect: "follow", signal: controller.signal });
+        if (checked.status === 405 || checked.status === 403) {
+          checked = await fetch(url, { method: "GET", redirect: "follow", headers: { Range: "bytes=0-0" }, signal: controller.signal });
+        }
+        return { url, ok: checked.ok || (checked.status >= 300 && checked.status < 400), status: checked.status };
+      } catch (error) {
+        return { url, ok: false, status: 0, error: error instanceof Error && error.name === "AbortError" ? "timeout" : "unreachable" };
+      } finally {
+        clearTimeout(timer);
+      }
+    }));
+    response.json({ results, valid: results.filter((result) => result.ok).map((result) => result.url), invalid: results.filter((result) => !result.ok).map((result) => result.url) });
+  });
+
   app.post("/api/admin/access-accounts", async (request, response) => {
     if (!requireAdmin(request, response)) return;
     const displayName = String(request.body?.displayName ?? "").trim();
