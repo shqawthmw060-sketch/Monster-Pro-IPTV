@@ -15,8 +15,8 @@ async function post(path: string, body: unknown) {
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(body),
   });
-  const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
-  if (!response.ok) throw new Error(payload.error ?? "تعذر حفظ البيانات.");
+  const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string; code?: string };
+  if (!response.ok) throw new Error(`${payload.error ?? "تعذر حفظ البيانات."}${payload.code ? ` [${payload.code}]` : ""}`);
   return payload;
 }
 
